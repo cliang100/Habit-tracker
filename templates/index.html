@@ -5,9 +5,13 @@
 </head>
 <body>
     <h1>Habit Tracker</h1>
-    <form action="/complete" method="POST">
-        <button type="submit">Mark Complete</button>
-    </form>
-    
+    {% for habit in habits%}
+        <div>
+            <h3>{{ habit.name }} - Streak: {{ habit.streak }} days</h3>
+            <form action="/complete/{{ habit.name }}" method="POST">
+                <button type="submit">Mark Complete</button>
+            </form>
+        </div>
+    {% endfor %}
 </body>
 </html>
