@@ -2,16 +2,28 @@
 <html>
 <head>
     <title>Habit Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Habit Tracker</h1>
+
     {% for habit in habits%}
-        <div>
+        <div class="habit-item">
             <h3>{{ habit.name }} - Streak: {{ habit.streak }} days</h3>
             <form action="/complete/{{ habit.name }}" method="POST">
                 <button type="submit">Mark Complete</button>
             </form>
+            <form action="/delete_habit/{{ habit.name }}" method="POST">
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
         </div>
     {% endfor %}
+
+    <hr>
+    <h2>Add New Habit</h2>
+    <form action="/add_habit" method="POST">
+        <input type="text" name="habit_name" placeholder="Enter habit name" required>
+        <button type="submit">Add Habit</button>
+    </form>
 </body>
 </html>

@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: #4CAF50;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #e0e0e0;
+    margin-top: 40px; 
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #e0e0e0;
+    margin-bottom: 10px;
+}
+
+.habit-item {
+    background-color: #2d2d2d;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.delete-btn {
+    background-color: #f44336;
+}
+
+.delete-btn:hover {
+    background-color: #da190b;
+}
+
+input[type="text"] {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #4CAF50;
+    padding: 10px;
+    border-radius: 5px;
+    width: 300px;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #45a049;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #444;
+    margin: 40px 0;
+}
+
+form {
+    display: inline;
+}

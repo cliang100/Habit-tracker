@@ -14,8 +14,15 @@ def get_streak(habit_name):
     if not dates:
         return 0
     
+    today = date.today()
+    most_recent = date.fromisoformat(dates[0])
+    
+    # If most recent is more than 1 day ago, streak is broken
+    if (today - most_recent).days > 1:
+        return 0
+    
     streak = 1
-    current = date.fromisoformat(dates[0])
+    current = most_recent
     
     for i in range(1, len(dates)):
         prev = date.fromisoformat(dates[i])
@@ -40,7 +47,11 @@ def init_db():
 
 @app.route('/')
 def home():
-    habits = ['Coding', 'Gym', 'LeetCode']
+    conn = sqlite3.connect('habits.db')
+    c = conn.cursor()
+    c.execute("SELECT habit_name FROM habits_list")
+    habits = [row[0] for row in c.fetchall()]
+    conn.close()
     habit_data = []
     for habit in habits:
         streak = get_streak(habit)
@@ -60,6 +71,29 @@ def complete(habit_name):
         c.execute("INSERT INTO habits (habit_name, date, completed) VALUES (?, ?, 1)", (habit_name, today))
         conn.commit()
     
+    conn.close()
+    return redirect(url_for('home'))
+
+@app.route('/add_habit', methods=['POST'])
+def add_habit():
+    habit_name = request.form['habit_name']
+    conn = sqlite3.connect('habits.db')
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO habits_list (habit_name) VALUES (?)", (habit_name,))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        pass    # Habit already exists, ignore
+    conn.close()
+    return redirect(url_for('home'))
+
+@app.route('/delete_habit/<habit_name>', methods=['POST'])
+def delete_habit(habit_name):
+    conn = sqlite3.connect('habits.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM habits_list WHERE habit_name = ?", (habit_name,))
+    c.execute("DELETE FROM habits WHERE habit_name = ?", (habit_name,))     # Also delete completion history
+    conn.commit()
     conn.close()
     return redirect(url_for('home'))
 
