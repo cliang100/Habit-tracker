@@ -7,6 +7,22 @@
 <body>
     <h1>Habit Tracker</h1>
 
+    <div class="timer-section">
+        <h2 id="timer-mode">Work Session</h2>
+        <div id="timer-display">25:00</div>
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+
+        <div class="timer-settings">
+            <label>Work (min): <input type="number" id="work-duration" value="25" min="1"></label>
+            <label>Break (min): <input type="number" id="break-duration" value="5" min="1"></label>
+            <button onclick="updateSettings()">Update</button>
+        </div>
+    </div>
+
+    <hr>
+
     {% for habit in habits%}
         <div class="habit-item">
             <h3>{{ habit.name }} - Streak: {{ habit.streak }} days</h3>
@@ -24,6 +40,31 @@
     <form action="/add_habit" method="POST">
         <input type="text" name="habit_name" placeholder="Enter habit name" required>
         <button type="submit">Add Habit</button>
+    </form>
+    <script src="{{ url_for('static', filename='timer.js') }}"></script>
+    <hr>
+    <h2>Backfill Past Streak</h2>
+    <form action="/backfill" method="POST">
+        <select name="habit_name" required>
+            <option value="">Select habit...</option>
+            {% for habit in habits %}
+                <option value="{{ habit.name }}">{{ habit.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="date" required>
+        <button type="submit">Add Past Entry</button>
+    </form>
+    <hr>
+    <h2>Bulk Backfill Streak</h2>
+    <form action="/bulk_backfill" method="POST">
+        <select name="habit_name" required>
+            <option value="">Select habit...</option>
+            {% for habit in habits %}
+                <option value="{{ habit.name }}">{{ habit.name }}</option>
+            {% endfor %}
+        </select>
+        <label>I've been doing this consistently since: <input type="date" name="start_date" required></label>
+        <button type="submit">Backfill to Today</button>
     </form>
 </body>
 </html>
