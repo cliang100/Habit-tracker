@@ -60,6 +60,6 @@ CREATE TABLE habits_list
 3. ✅ Midnight reset logic
 4. ✅ Pomodoro timer with custom durations
 5. ✅ Backfill past streak data
-6. ⏳ Calendar view for visual tracking
+6. 🔄 Calendar view (in progress - bug with multi-habit display)
 7. ⏳ Eye break reminders
 8. ⏳ Sound effects & motivational quotes

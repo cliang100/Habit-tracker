@@ -135,6 +135,25 @@ def bulk_backfill():
     conn.close()
     return redirect(url_for('home'))
 
+# TODO: Fix bug - append happens inside if statement, only shows first habit per day
+# Move data[date_str].append(habit_name) outside the if block
+@app.route('/api/habit_data')
+def habit_data():
+    conn = sqlite3.connect('habits.db')
+    c = conn.cursor()
+    c.execute("SELECT date, habit_name FROM habits ORDER BY date")
+    rows = c.fetchall()
+    conn.close()
+    
+    # Group by date
+    data = {}
+    for date_str, habit_name in rows:
+        if date_str not in data:
+            data[date_str] = []
+            data[date_str].append(habit_name)
+    
+    return data
+
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)

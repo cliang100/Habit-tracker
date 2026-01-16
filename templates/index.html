@@ -66,5 +66,15 @@
         <label>I've been doing this consistently since: <input type="date" name="start_date" required></label>
         <button type="submit">Backfill to Today</button>
     </form>
+    <hr>
+    <h2>Calendar View</h2>
+    <div class="calendar-controls">
+        <button onclick="previousMonth()">← Previous</button>
+        <span id="current-month"></span>
+        <button onclick="nextMonth()">Next →</button>
+    </div>
+    <div id="calendar-container"></div>
+
+    <script src="{{ url_for('static', filename='calendar.js') }}"></script>
 </body>
 </html>
