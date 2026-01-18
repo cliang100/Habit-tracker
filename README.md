@@ -12,8 +12,9 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 - Timer auto-logs hours to selected habit (Coding/Leetcode count toward competency)
 - Per-habit time tracking (see total hours spent on each habit)
 - Coding competency hours tracker with progress bar (0-600 hour goal)
+- Collapsible table showing all competency entries with delete buttons
 - Interactive calendar view with modal popups showing daily completions
-- Manual backfill for past streak data and competency hours
+- Manual backfill for competency hours (input minutes, auto-converts to hours)
 - Dark mode with clean UI
 - Persistent local database
 
@@ -29,11 +30,20 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 ✅ Timer-to-habit integration (auto-logs time for selected habit)  
 ✅ Per-habit total time display  
 ✅ Eye break reminders (alerts every 20 minutes during work sessions)  
-⏳ Delete/undo entries (fix mistakes in competency hours/time logs)  
-⏳ Habit selector for manual competency backfill (Coding vs Leetcode)  
+✅ Manual competency backfill with habit selector (Coding vs Leetcode, input minutes)  
+✅ Collapsible competency entries table with delete functionality  
+🐛 **BUG**: Deleting competency entry removes ALL habit_time entries instead of just matching one  
+⏳ Add collapsible habit_time log table (similar to competency entries)  
 ⏳ Calendar visual indicators (color-coded habit dots without clicking)  
 ⏳ Preset pomodoro duration buttons (25/5, 50/10, 90/15)  
-⏳ Modern UI with animations
+⏳ Modern UI with animations  
+⏳ Write unit tests with pytest
+
+## Known Issues
+**CRITICAL BUG - Delete Function:**
+- Deleting a competency entry removes ALL matching habit_time entries for that habit/date, not just the specific minutes amount
+- Example: Two 30-min Coding entries on same day = 1h total. Deleting one entry removes BOTH, zeroing out the time.
+- **Fix needed**: DELETE query is too broad - matches on `habit_name`, `date`, and `minutes`, but multiple entries can have same values. Need better matching logic or unique constraint.
 
 ## Setup
 ```bash
@@ -64,7 +74,8 @@ CREATE TABLE competency_hours
 (id INTEGER PRIMARY KEY,
  date TEXT,
  hours REAL,
- source TEXT)
+ source TEXT,
+ habit_name TEXT)
 
 -- Per-habit time tracking (all habits)
 CREATE TABLE habit_time
@@ -90,17 +101,16 @@ CREATE TABLE habit_time
 6. ✅ Calendar view with multi-habit display
 7. ✅ Eye break reminders
 8. ✅ Timer integration with habit tracking
-9. ⏳ Delete/undo functionality for mistakes
-10. ⏳ Preset pomodoro buttons
-11. ⏳ Visual calendar improvements
-12. ⏳ Modern UI with animations
+9. ✅ Manual competency backfill with minutes input
+10. 🐛 Fix delete functionality (currently broken)
+11. ⏳ Add habit_time log table
+12. ⏳ Preset pomodoro buttons
+13. ⏳ Visual calendar improvements
+14. ⏳ Modern UI with animations
+15. ⏳ Write unit tests
 
-## Development TODO
-- [ ] Complete delete functionality for competency entries
-  - Update home() route to fetch competency_entries
-  - Add /delete_competency/<id> route
-  - Add CSS for entry table display
-- [ ] Add habit selector to manual competency backfill form
-- [ ] Calendar visual improvements (colored dots per habit)
-- [ ] Preset pomodoro duration buttons
-- [ ] Modern UI animations
+## Next Session Priority
+**Fix the delete bug**: The DELETE query matches multiple rows when there are duplicate entries. Need to either:
+- Track `competency_hours.id` → `habit_time.id` relationship in database
+- Delete using `LIMIT 1` and `ORDER BY id` to only remove oldest/newest match
+- Store a unique session_id to link entries across tables

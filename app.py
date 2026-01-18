@@ -78,6 +78,11 @@ def home():
     c.execute("SELECT SUM(hours) FROM competency_hours")
     total_hours = c.fetchone()[0] or 0
     
+    # Get all competency entries for display
+    c.execute("SELECT id, date, hours, source, habit_name FROM competency_hours ORDER BY date DESC")
+    competency_entries = [{'id': row[0], 'date': row[1], 'hours': row[2], 'source': row[3], 'habit_name': row[4]}
+                          for row in c.fetchall()]
+    
     habit_data = []
     for habit in habits:
         streak = get_streak(habit)
@@ -93,8 +98,9 @@ def home():
             'total_hours': total_time_hours
         })
         
-    conn.close()  
-    return render_template('index.html', habits=habit_data, total_hours=round(total_hours, 2))
+    conn.close()
+    return render_template('index.html', habits=habit_data, total_hours=round(total_hours, 2),
+                           competency_entries=competency_entries)
 
 @app.route('/complete/<habit_name>', methods=['POST'])
 def complete(habit_name):
@@ -175,14 +181,46 @@ def bulk_backfill():
 
 @app.route('/add_competency_hours', methods=['POST'])
 def add_competency_hours():
-    hours = float(request.form['hours'])
-    source = request.form.get('source', 'Manual')
+    habit_name = request.form['habit_name']
+    minutes = int(request.form['minutes'])
+    hours = minutes / 60
     today = str(date.today())
     
     conn = sqlite3.connect('habits.db')
     c = conn.cursor()
-    c.execute("INSERT INTO competency_hours (date, hours, source) VALUES (?, ?, ?)",
-               (today, hours, source))
+    
+    # Add to competency_hours table
+    c.execute("INSERT INTO competency_hours (date, hours, source, habit_name) VALUES (?, ?, ?, ?)",
+               (today, hours, 'Manual', habit_name))
+    
+    # Also add to habit_time table so "Time: Xh" updates
+    c.execute("INSERT INTO habit_time (habit_name, date, minutes) VALUES (?, ?, ?)",
+              (habit_name, today, minutes))
+    
+    conn.commit()
+    conn.close()
+    return redirect(url_for('home'))
+
+@app.route('/delete_competency/<int:entry_id>', methods=['POST'])
+def delete_competency(entry_id):
+    conn = sqlite3.connect('habits.db')
+    c = conn.cursor()
+    
+    # Get the date and habit_name before deleting
+    c.execute("SELECT date, habit_name, hours FROM competency_hours WHERE id = ?", (entry_id,))
+    entry = c.fetchone()
+    
+    if entry:
+        date_str, habit_name, hours = entry
+        minutes = int(hours * 60)
+        
+        # Delete from competency_hours
+        c.execute("DELETE FROM competency_hours WHERE id = ?", (entry_id,))
+        
+        # Also delete matching entry from habit_time
+        c.execute("DELETE FROM habit_time WHERE habit_name = ? AND date = ? AND minutes = ?",
+                  (habit_name, date_str, minutes))
+        
     conn.commit()
     conn.close()
     return redirect(url_for('home'))
@@ -200,11 +238,11 @@ def log_habit_time():
     c.execute("INSERT INTO habit_time (habit_name, date, minutes) VALUES (?, ?, ?)",
               (habit_name, today, minutes))
     
-    # If Coding or Leetcode, also log to competency hours
+    # If Coding or Leetcode, also log to competency hours WITH habit_name
     if habit_name in ['Coding', 'Leetcode']:
         hours = minutes / 60
-        c.execute("INSERT INTO competency_hours (date, hours, source) VALUES (?, ?, ?)",
-                  (today, hours, 'Timer'))
+        c.execute("INSERT INTO competency_hours (date, hours, source, habit_name) VALUES (?, ?, ?, ?)",
+                  (today, hours, 'Timer', habit_name))
     
     conn.commit()
     conn.close()
