@@ -13,7 +13,7 @@
         <div class="progress-container">
             <div class="progress-bar" style="width: {{ (total_hours / 600 * 100) }}%"></div>
         </div>
-        <p class="hours-display">{{ total_hours }} / 600 hours ({{ ((total_hours / 600 * 100) | round(1)) }}%)</p>
+        <p class="hours-display">{{ total_hours }} / 600 hours ({{ ((total_hours / 600 * 100) | round(2)) }}%)</p>
 
         <h3>Backfill Hours</h3>
         <form action="/add_competency_hours" method="POST" class="backfill-hours-form">
@@ -22,6 +22,30 @@
         </form>
     </div>
     <hr>
+
+    <details>
+        <summary>View All Competency Entries (Click to Expand)</summary>
+        <table class="entry-table">
+            <tr>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Source</th>
+                <th>Action</th>
+            </tr>
+            {% for entry in competency_entries %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.hours }}</td>
+                <td>{{ entry.source }}</td>
+                <td>
+                    <form action="/delete_competency/{{ entry.id }}" method="POST" style="display:inline;">
+                        <button type="submit" class="delete-btn-small">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </details>
 
     <div class="timer-section">
         <h2 id="timer-mode">Work Session</h2>
@@ -46,7 +70,7 @@
 
     {% for habit in habits%}
         <div class="habit-item">
-            <h3>{{ habit.name }} - Streak: {{ habit.streak }} days</h3>
+            <h3>{{ habit.name }} - Streak: {{ habit.streak }} days | Time: {{ habit.total_hours }}h</h3>
             <form action="/complete/{{ habit.name }}" method="POST">
                 <button type="submit">Mark Complete</button>
             </form>

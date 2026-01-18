@@ -78,14 +78,23 @@ def home():
     c.execute("SELECT SUM(hours) FROM competency_hours")
     total_hours = c.fetchone()[0] or 0
     
-    conn.close()
-    
     habit_data = []
     for habit in habits:
         streak = get_streak(habit)
-        habit_data.append({'name': habit, 'streak': streak})
         
-    return render_template('index.html', habits=habit_data, total_hours=round(total_hours, 1))
+        # Get total minutes for this habit
+        c.execute("SELECT SUM(minutes) FROM habit_time WHERE habit_name = ?", (habit,))
+        total_minutes = c.fetchone()[0] or 0
+        total_time_hours = round(total_minutes / 60, 1)
+        
+        habit_data.append({
+            'name': habit, 
+            'streak': streak,
+            'total_hours': total_time_hours
+        })
+        
+    conn.close()  
+    return render_template('index.html', habits=habit_data, total_hours=round(total_hours, 2))
 
 @app.route('/complete/<habit_name>', methods=['POST'])
 def complete(habit_name):
@@ -177,6 +186,29 @@ def add_competency_hours():
     conn.commit()
     conn.close()
     return redirect(url_for('home'))
+
+@app.route('/log_habit_time', methods=['POST'])
+def log_habit_time():
+    habit_name = request.form['habit_name']
+    minutes = int(request.form['minutes'])
+    today = str(date.today())
+    
+    conn = sqlite3.connect('habits.db')
+    c = conn.cursor()
+    
+    # Log to habit_time table
+    c.execute("INSERT INTO habit_time (habit_name, date, minutes) VALUES (?, ?, ?)",
+              (habit_name, today, minutes))
+    
+    # If Coding or Leetcode, also log to competency hours
+    if habit_name in ['Coding', 'Leetcode']:
+        hours = minutes / 60
+        c.execute("INSERT INTO competency_hours (date, hours, source) VALUES (?, ?, ?)",
+                  (today, hours, 'Timer'))
+    
+    conn.commit()
+    conn.close()
+    return '', 204
 
 @app.route('/get_total_hours')
 def get_total_hours():

@@ -4,6 +4,8 @@ let timeLeft = workDuration;
 let timerInterval = null;
 let isRunning = false;
 let isBreak = false;
+let eyeBreakInterval = 20 * 60;
+let timeSinceLastEyeBreak = 0;
 
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
@@ -16,9 +18,23 @@ function startTimer() {
     if (isRunning) return;
     isRunning = true;
 
+    // Validate habit selection before starting
+    const habitSelect = document.getElementById('timer-habit');
+    if (!habitSelect.value) {
+        alert('Please select a habit before starting the timer!');
+        return;
+    }
+
     timerInterval = setInterval(() => {
         timeLeft--;
+        timeSinceLastEyeBreak++;
         updateDisplay();
+
+        // Check for eye break every 20 minutes
+        if (timeSinceLastEyeBreak >= eyeBreakInterval && !isBreak) {
+            alert('👁️ Eye Break! Look at something 20 feet away for 20 seconds.');
+            timeSinceLastEyeBreak = 0;
+        }
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -60,13 +76,16 @@ function updateSettings() {
     resetTimer();
 }
 
-function logCompetencyHours(hours) {
-    fetch('/add_competency_hours', {
+function logCompetencyHours(minutes) {
+    const habitSelect = document.getElementById('timer-habit');
+    const habitName = habitSelect.value;
+
+    fetch('/log_habit_time', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `hours=${hours}&source=Timer`
+        body: `habit_name=${habitName}&minutes=${minutes}`
     });
 }
 
