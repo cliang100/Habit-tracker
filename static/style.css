@@ -195,3 +195,97 @@ input[type="date"] {
 .calendar-day:hover:not(.empty) {
     opacity: 0.8;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background-color: #2d2d2d;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 300px;
+    color: #e0e0e0;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #fff;
+}
+
+#modal-habits {
+    list-style: none;
+    padding: 0;
+}
+
+#modal-habits li {
+    padding: 10px;
+    background-color: #4CAF50;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.competency-tracker {
+    background-color: #2d2d2d;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.competency-notice {
+    color: #ffa500;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    height: 30px;
+    margin: 15px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.hours-display {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.backfill-hours-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.backfill-hours-form input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}

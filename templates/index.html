@@ -7,8 +7,30 @@
 <body>
     <h1>Habit Tracker</h1>
 
+    <div class="competency-tracker">
+        <h2>Coding Competency Progress</h2>
+        <p class="competency-notice">⚠️ Only tracks hours from "Coding" and "Leetcode" timer sessions</p>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: {{ (total_hours / 600 * 100) }}%"></div>
+        </div>
+        <p class="hours-display">{{ total_hours }} / 600 hours ({{ ((total_hours / 600 * 100) | round(1)) }}%)</p>
+
+        <h3>Backfill Hours</h3>
+        <form action="/add_competency_hours" method="POST" class="backfill-hours-form">
+            <input type="number" name="hours" step="0.5" placeholder="Hours" required>
+            <button type="submit">Add Hours</button>
+        </form>
+    </div>
+    <hr>
+
     <div class="timer-section">
         <h2 id="timer-mode">Work Session</h2>
+        <select id="timer-habit">
+            <option value="">Select habit...</option>
+            {% for habit in habits %}
+                <option value="{{ habit.name }}">{{ habit.name }}</option>
+            {% endfor %}
+        </select>
         <div id="timer-display">25:00</div>
         <button onclick="startTimer()">Start</button>
         <button onclick="pauseTimer()">Pause</button>
@@ -20,7 +42,6 @@
             <button onclick="updateSettings()">Update</button>
         </div>
     </div>
-
     <hr>
 
     {% for habit in habits%}
@@ -34,8 +55,8 @@
             </form>
         </div>
     {% endfor %}
-
     <hr>
+
     <h2>Add New Habit</h2>
     <form action="/add_habit" method="POST">
         <input type="text" name="habit_name" placeholder="Enter habit name" required>
@@ -43,6 +64,7 @@
     </form>
     <script src="{{ url_for('static', filename='timer.js') }}"></script>
     <hr>
+
     <h2>Backfill Past Streak</h2>
     <form action="/backfill" method="POST">
         <select name="habit_name" required>
@@ -55,6 +77,7 @@
         <button type="submit">Add Past Entry</button>
     </form>
     <hr>
+
     <h2>Bulk Backfill Streak</h2>
     <form action="/bulk_backfill" method="POST">
         <select name="habit_name" required>
@@ -67,6 +90,7 @@
         <button type="submit">Backfill to Today</button>
     </form>
     <hr>
+
     <h2>Calendar View</h2>
     <div class="calendar-controls">
         <button onclick="previousMonth()">← Previous</button>
@@ -76,5 +100,14 @@
     <div id="calendar-container"></div>
 
     <script src="{{ url_for('static', filename='calendar.js') }}"></script>
+    <hr>
+
+    <div id="day-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modal-date"></h3>
+            <ul id="modal-habits"></ul>
+        </div>
+    </div>
 </body>
 </html>

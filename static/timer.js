@@ -23,6 +23,12 @@ function startTimer() {
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             isRunning = false;
+
+            // Log hours if work session (not break)
+            if (!isBreak) {
+                logCompetencyHours(workDuration / 60);
+            }
+
             alert(isBreak ? 'Break over! Back to work.' : 'Time for a break!');
             switchMode();
         }
@@ -52,6 +58,16 @@ function updateSettings() {
     workDuration = parseInt(document.getElementById('work-duration').value) * 60;
     breakDuration = parseInt(document.getElementById('break-duration').value) * 60;
     resetTimer();
+}
+
+function logCompetencyHours(hours) {
+    fetch('/add_competency_hours', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `hours=${hours}&source=Timer`
+    });
 }
 
 // Initialize on page load

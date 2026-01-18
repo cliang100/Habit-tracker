@@ -68,8 +68,15 @@ function nextMonth() {
 function showDayDetails(dateStr) {
     const habits = habitData[dateStr];
     if (habits && habits.length > 0) {
-        alert(`Completed on ${dateStr}:\n- ${habits.join('\n- ')}`);
+        document.getElementById('modal-date').textContent = dateStr;
+        const habitList = document.getElementById('modal-habits');
+        habitList.innerHTML = habits.map(h => `<li>${h}</li>`).join('');
+        document.getElementById('day-modal').style.display = 'block';
     }
+}
+
+function closeModal() {
+    document.getElementById('day-modal').style.display = 'none';
 }
 
 // Load on page load

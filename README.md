@@ -9,6 +9,8 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 - Automatic streak reset at midnight if habit not completed
 - Pomodoro timer with customizable work/break durations
 - Backfill past streak data (single day or date range)
+- Coding competency hours tracker (600-800 hour goal)
+- Interactive calendar view with completion history
 - Dark mode with clean UI
 - Persistent local database
 
@@ -19,8 +21,13 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 ✅ Styled dark mode UI  
 ✅ Pomodoro timer with pause/reset  
 ✅ Backfill past streaks (single & bulk)  
-⏳ Calendar view (planned)  
-⏳ Eye break reminders (planned)  
+✅ Calendar view with modal popups  
+✅ Competency hours tracker with progress bar  
+🔄 Timer-to-habit integration (in progress)  
+⏳ Calendar visual indicators (color-coded habit dots)  
+⏳ Eye break reminders  
+⏳ Preset pomodoro durations  
+⏳ Modern UI with animations
 
 ## Setup
 ```bash
@@ -45,6 +52,20 @@ CREATE TABLE habits
 CREATE TABLE habits_list
 (id INTEGER PRIMARY KEY,
  habit_name TEXT UNIQUE)
+
+-- Competency hours tracking
+CREATE TABLE competency_hours
+(id INTEGER PRIMARY KEY,
+ date TEXT,
+ hours REAL,
+ source TEXT)
+
+-- Per-habit time tracking
+CREATE TABLE habit_time
+(id INTEGER PRIMARY KEY,
+ habit_name TEXT,
+ date TEXT,
+ minutes INTEGER)
 ```
 
 ## Tech Stack
