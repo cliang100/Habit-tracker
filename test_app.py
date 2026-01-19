@@ -35,3 +35,49 @@ def test_home_page_loads(client):
 def test_add_habit(client):
     response = client.post('/add_habit', data={'habit_name': 'Gym'})
     assert response.status_code == 302  # Redirect after adding
+    
+def test_add_competency_hours(client):
+    response = client.post('/add_competency_hours', data={
+        'habit_name': 'Coding',
+        'minutes': 90
+    })
+    assert response.status_code == 302  # Redirect
+    
+    # Verify it was added
+    conn = sqlite3.connect('test_habits.db')
+    c = conn.cursor()
+    c.execute("SELECT SUM(hours) FROM competency_hours WHERE habit_name = 'Coding'")
+    total = c.fetchone()[0]
+    conn.close()
+    assert total == 1.5  # 90 minutes = 1.5 hours
+    
+def test_delete_competency(client):
+    # First add an entry
+    conn = sqlite3.connect('test_habits.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO competency_hours (date, hours, source, habit_name) VALUES ('2026-01-18', 2.0, 'Manual', 'Coding')")
+    entry_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    
+    # Delete it
+    response = client.post(f'/delete_competency/{entry_id}')
+    assert response.status_code == 302
+    
+    # Verify it's gone
+    conn = sqlite3.connect('test_habits.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM competency_hours WHERE id = ?", (entry_id,))
+    assert c.fetchone() is None
+    conn.close()
+    
+def test_mark_habit_complete(client):
+    response = client.post('/complete/Coding')
+    assert response.status_code == 302
+    
+    # Verify completion was logged
+    conn = sqlite3.connect('test_habits.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM habits WHERE habit_name = 'Coding'")
+    assert c.fetchone() is not None
+    conn.close()

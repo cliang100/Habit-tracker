@@ -8,10 +8,9 @@ def get_db_path():
     if app.config.get('TESTING'):
         return 'test_habits.db'
     return 'habits.db'
-#TODO: replace every sqlite3.connect('habits.db') with sqlite3.connect(get_db_path()) for testing!
 
 def get_streak(habit_name):
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute("SELECT date FROM habits WHERE habit_name = ? ORDER BY date DESC", (habit_name,))
     dates = [row[0] for row in c.fetchall()]
@@ -41,7 +40,7 @@ def get_streak(habit_name):
     return streak
 
 def init_db():
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS habits
                  (id INTEGER PRIMARY KEY,
@@ -52,7 +51,7 @@ def init_db():
     conn.close()
 
 def init_competency_db():
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS competency_hours
                  (id INTEGER PRIMARY KEY,
@@ -63,7 +62,7 @@ def init_competency_db():
     conn.close()
 
 def init_habit_time_db():
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS habit_time
                  (id INTEGER PRIMARY KEY,
@@ -75,7 +74,7 @@ def init_habit_time_db():
 
 @app.route('/')
 def home():
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute("SELECT habit_name FROM habits_list")
     habits = [row[0] for row in c.fetchall()]
@@ -110,7 +109,7 @@ def home():
 
 @app.route('/complete/<habit_name>', methods=['POST'])
 def complete(habit_name):
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     today = str(date.today())
     
@@ -127,7 +126,7 @@ def complete(habit_name):
 @app.route('/add_habit', methods=['POST'])
 def add_habit():
     habit_name = request.form['habit_name']
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     try:
         c.execute("INSERT INTO habits_list (habit_name) VALUES (?)", (habit_name,))
@@ -139,7 +138,7 @@ def add_habit():
 
 @app.route('/delete_habit/<habit_name>', methods=['POST'])
 def delete_habit(habit_name):
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute("DELETE FROM habits_list WHERE habit_name = ?", (habit_name,))
     c.execute("DELETE FROM habits WHERE habit_name = ?", (habit_name,))     # Also delete completion history
@@ -152,7 +151,7 @@ def backfill():
     habit_name = request.form['habit_name']
     date_str = request.form['date']
     
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     
     # Check if entry already exists for this date
@@ -170,7 +169,7 @@ def bulk_backfill():
     start_date = date.fromisoformat(request.form['start_date'])
     end_date = date.today() # Always end at today
     
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     
     current = start_date
@@ -192,7 +191,7 @@ def add_competency_hours():
     hours = minutes / 60
     today = str(date.today())
     
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     
     # Add to competency_hours table
@@ -205,7 +204,7 @@ def add_competency_hours():
 
 @app.route('/delete_competency/<int:entry_id>', methods=['POST'])
 def delete_competency(entry_id):
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute("DELETE FROM competency_hours WHERE id = ?", (entry_id,))
     conn.commit()
@@ -218,7 +217,7 @@ def log_habit_time():
     minutes = int(request.form['minutes'])
     today = str(date.today())
     
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     
     # If Coding or Leetcode, also log to competency hours WITH habit_name
@@ -233,7 +232,7 @@ def log_habit_time():
 
 @app.route('/get_total_hours')
 def get_total_hours():
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute("SELECT SUM(hours) FROM competency_hours")
     total = c.fetchone()[0] or 0
@@ -242,7 +241,7 @@ def get_total_hours():
 
 @app.route('/api/habit_data')
 def habit_data():
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(get_db_path())
     c = conn.cursor()
     c.execute("SELECT date, habit_name FROM habits ORDER BY date")
     rows = c.fetchall()
