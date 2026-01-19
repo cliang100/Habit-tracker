@@ -1,6 +1,6 @@
 # Habit Tracker
 
-A web-based habit streak tracker built with Flask and SQLite. Track multiple habits independently with automatic midnight streak reset, Pomodoro timer with eye break reminders, competency hour tracking, and a modern dark mode UI.
+A web-based habit streak tracker built with Flask and SQLite. Track multiple habits independently with automatic midnight streak reset, Pomodoro timer with eye break reminders, competency hour tracking for Coding/Leetcode, and a modern dark mode UI.
 
 ## Features
 - Track multiple habits with independent streak counters
@@ -10,7 +10,7 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 - Pomodoro timer with customizable work/break durations
 - Eye break reminders (20-20-20 rule: every 20 minutes)
 - Timer auto-logs hours to selected habit (Coding/Leetcode count toward competency)
-- Per-habit time tracking (see total hours spent on each habit)
+- Competency-specific time tracking (only Coding/Leetcode show Time: Xh)
 - Coding competency hours tracker with progress bar (0-600 hour goal)
 - Collapsible table showing all competency entries with delete buttons
 - Interactive calendar view with modal popups showing daily completions
@@ -28,22 +28,16 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 ✅ Calendar view with modal popups (shows all habits per day)  
 ✅ Competency hours tracker with progress bar (2 decimal precision)  
 ✅ Timer-to-habit integration (auto-logs time for selected habit)  
-✅ Per-habit total time display  
+✅ Competency-specific time display (Coding/Leetcode only)  
 ✅ Eye break reminders (alerts every 20 minutes during work sessions)  
 ✅ Manual competency backfill with habit selector (Coding vs Leetcode, input minutes)  
 ✅ Collapsible competency entries table with delete functionality  
-🐛 **BUG**: Deleting competency entry removes ALL habit_time entries instead of just matching one  
-⏳ Add collapsible habit_time log table (similar to competency entries)  
+✅ Delete bug fixed (removed habit_time table, simplified to competency_hours only)  
+🔧 **IN PROGRESS**: Unit tests with pytest (database path config added, need to finish refactor)  
+⏳ Split progress bar (show Coding vs Leetcode distribution with colors)  
 ⏳ Calendar visual indicators (color-coded habit dots without clicking)  
 ⏳ Preset pomodoro duration buttons (25/5, 50/10, 90/15)  
-⏳ Modern UI with animations  
-⏳ Write unit tests with pytest
-
-## Known Issues
-**CRITICAL BUG - Delete Function:**
-- Deleting a competency entry removes ALL matching habit_time entries for that habit/date, not just the specific minutes amount
-- Example: Two 30-min Coding entries on same day = 1h total. Deleting one entry removes BOTH, zeroing out the time.
-- **Fix needed**: DELETE query is too broad - matches on `habit_name`, `date`, and `minutes`, but multiple entries can have same values. Need better matching logic or unique constraint.
+⏳ Modern UI with animations
 
 ## Setup
 ```bash
@@ -54,6 +48,11 @@ python app.py
 ```
 
 Visit `http://localhost:5000` and start tracking!
+
+## Running Tests
+```bash
+pytest test_app.py -v
+```
 
 ## Database Schema
 ```sql
@@ -76,13 +75,6 @@ CREATE TABLE competency_hours
  hours REAL,
  source TEXT,
  habit_name TEXT)
-
--- Per-habit time tracking (all habits)
-CREATE TABLE habit_time
-(id INTEGER PRIMARY KEY,
- habit_name TEXT,
- date TEXT,
- minutes INTEGER)
 ```
 
 ## Tech Stack
@@ -90,6 +82,7 @@ CREATE TABLE habit_time
 - Flask
 - SQLite
 - HTML/CSS/JavaScript
+- pytest (testing)
 - Dark mode styling
 
 ## Project Goals
@@ -102,15 +95,25 @@ CREATE TABLE habit_time
 7. ✅ Eye break reminders
 8. ✅ Timer integration with habit tracking
 9. ✅ Manual competency backfill with minutes input
-10. 🐛 Fix delete functionality (currently broken)
-11. ⏳ Add habit_time log table
-12. ⏳ Preset pomodoro buttons
-13. ⏳ Visual calendar improvements
-14. ⏳ Modern UI with animations
-15. ⏳ Write unit tests
+10. ✅ Fix delete functionality (simplified to single table)
+11. 🔧 Write unit tests with pytest
+12. ⏳ Split progress bar (Coding vs Leetcode visualization)
+13. ⏳ Preset pomodoro buttons
+14. ⏳ Visual calendar improvements
+15. ⏳ Modern UI with animations
 
-## Next Session Priority
-**Fix the delete bug**: The DELETE query matches multiple rows when there are duplicate entries. Need to either:
-- Track `competency_hours.id` → `habit_time.id` relationship in database
-- Delete using `LIMIT 1` and `ORDER BY id` to only remove oldest/newest match
-- Store a unique session_id to link entries across tables
+## Next Steps
+- Complete database path refactor (replace all `habits.db` with `get_db_path()`)
+- Finish writing unit tests for all routes
+- Split progress bar to show Coding/Leetcode distribution
+
+## Personal Notes for Coding progress
+- So far, I've been coding this project consistently since the 12th. As of today the 18th Sunday, that makes it 7 days of coding. I'm unsure exactly how much time I've put in. I wanna say for 2 or 3 days (12th to the 13th or 14th I think?) I have been doing about an hour a day. Then, mayyybe starting the 15th I bumped it up to 90 min cycles, since that's the best deep work interval I hear. Then on Saturday, I managed to squeeze in another hour after the 90 min cycle and finally today, Sunday, I did two 90 min cycles and am about to do a third 90 min cycle of leetcode. I probably did some leetcode around the 12th too, but I'm unsure how much time I did exactly. This will all go towards my progress bar (the 600 hour goal thing to becoming a REAL DEV) once the app is done or at least done in the sense that I have all the important things. Since I'm unsure of so many time intervals aside from the general blocks I did, I think I should just say the following:
+
+- Coding: 3 days of 60 min, 2 days of 90 min, 1 day of 90 + 60, 1 day of 90 * 2.
+- Leetcode: 1 day of 60 min, 1 day of 90 min
+
+- Coding Total: 690 min or 11.5 hours
+- Leetcode Total: 150 min or 2.5 hours
+
+It's best to undershoot when it comes to these things. I don't want to say I did more than I did and end up being short of the goal unknowingly, which would make me slightly unqualified in actuality. But yeah like I said I'll just add it to the progress bar once this is done with the backfill option and keep track manually for now.

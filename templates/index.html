@@ -77,7 +77,11 @@
 
     {% for habit in habits%}
         <div class="habit-item">
-            <h3>{{ habit.name }} - Streak: {{ habit.streak }} days | Time: {{ habit.total_hours }}h</h3>
+            {% if habit.name in ['Coding', 'Leetcode'] %}
+                <h3>{{ habit.name }} - Streak: {{ habit.streak }} days | Time: {{ habit.total_hours }}h</h3>
+            {% else %}
+                <h3>{{ habit.name }} - Streak: {{ habit.streak }} days</h3>
+            {% endif %}
             <form action="/complete/{{ habit.name }}" method="POST">
                 <button type="submit">Mark Complete</button>
             </form>

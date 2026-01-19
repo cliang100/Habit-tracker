@@ -4,6 +4,12 @@ from datetime import date, timedelta
 
 app = Flask(__name__)
 
+def get_db_path():
+    if app.config.get('TESTING'):
+        return 'test_habits.db'
+    return 'habits.db'
+#TODO: replace every sqlite3.connect('habits.db') with sqlite3.connect(get_db_path()) for testing!
+
 def get_streak(habit_name):
     conn = sqlite3.connect('habits.db')
     c = conn.cursor()
@@ -87,11 +93,11 @@ def home():
     for habit in habits:
         streak = get_streak(habit)
         
-        # Get total minutes for this habit
-        c.execute("SELECT SUM(minutes) FROM habit_time WHERE habit_name = ?", (habit,))
-        total_minutes = c.fetchone()[0] or 0
-        total_time_hours = round(total_minutes / 60, 1)
-        
+        # Get total hours from competency_hours (only for Coding/Leetcode)
+        if habit in ['Coding', 'Leetcode']:
+            c.execute("SELECT SUM(hours) FROM competency_hours WHERE habit_name = ?", (habit,))
+            total_time_hours = round(c.fetchone()[0] or 0, 1)
+      
         habit_data.append({
             'name': habit, 
             'streak': streak,
@@ -193,10 +199,6 @@ def add_competency_hours():
     c.execute("INSERT INTO competency_hours (date, hours, source, habit_name) VALUES (?, ?, ?, ?)",
                (today, hours, 'Manual', habit_name))
     
-    # Also add to habit_time table so "Time: Xh" updates
-    c.execute("INSERT INTO habit_time (habit_name, date, minutes) VALUES (?, ?, ?)",
-              (habit_name, today, minutes))
-    
     conn.commit()
     conn.close()
     return redirect(url_for('home'))
@@ -205,22 +207,7 @@ def add_competency_hours():
 def delete_competency(entry_id):
     conn = sqlite3.connect('habits.db')
     c = conn.cursor()
-    
-    # Get the date and habit_name before deleting
-    c.execute("SELECT date, habit_name, hours FROM competency_hours WHERE id = ?", (entry_id,))
-    entry = c.fetchone()
-    
-    if entry:
-        date_str, habit_name, hours = entry
-        minutes = int(hours * 60)
-        
-        # Delete from competency_hours
-        c.execute("DELETE FROM competency_hours WHERE id = ?", (entry_id,))
-        
-        # Also delete matching entry from habit_time
-        c.execute("DELETE FROM habit_time WHERE habit_name = ? AND date = ? AND minutes = ?",
-                  (habit_name, date_str, minutes))
-        
+    c.execute("DELETE FROM competency_hours WHERE id = ?", (entry_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('home'))
@@ -233,10 +220,6 @@ def log_habit_time():
     
     conn = sqlite3.connect('habits.db')
     c = conn.cursor()
-    
-    # Log to habit_time table
-    c.execute("INSERT INTO habit_time (habit_name, date, minutes) VALUES (?, ?, ?)",
-              (habit_name, today, minutes))
     
     # If Coding or Leetcode, also log to competency hours WITH habit_name
     if habit_name in ['Coding', 'Leetcode']:
@@ -277,5 +260,4 @@ def habit_data():
 if __name__ == "__main__":
     init_db()
     init_competency_db()
-    init_habit_time_db()
     app.run(debug=True)
