@@ -256,17 +256,38 @@ input[type="date"] {
 
 .progress-container {
     width: 100%;
-    background-color: #1a1a1a;
-    border-radius: 10px;
-    height: 30px;
-    margin: 15px 0;
+    max-width: 600px;          /* optional: nicer on wide screens */
+    margin: 1rem 0;
 }
 
 .progress-bar {
+    height: 28px;              /* a bit thicker = easier to see */
+    background: #444;          /* dark background for dark mode */
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.coding-segment {
     height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #45a049);
-    border-radius: 10px;
-    transition: width 0.3s ease;
+    background: #4CAF50;       /* green */
+    float: left;
+    transition: width 0.6s ease;
+}
+
+.leetcode-segment {
+    height: 100%;
+    background: #2196F3;       /* blue */
+    float: left;
+    transition: width 0.6s ease;
+}
+
+.progress-label {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: #ccc;
 }
 
 .hours-display {
@@ -325,4 +346,27 @@ summary {
     background-color: #f44336;
     padding: 5px 10px;
     font-size: 12px;
+}
+
+.preset-buttons {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.preset-buttons button {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.preset-buttons button:hover {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
 }

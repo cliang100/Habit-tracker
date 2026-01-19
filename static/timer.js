@@ -89,5 +89,11 @@ function logCompetencyHours(minutes) {
     });
 }
 
+function setPreset(workMin, breakMin) {
+    document.getElementById('work-duration').value = workMin;
+    document.getElementById('break-duration').value = breakMin;
+    updateSettings();
+}
+
 // Initialize on page load
 updateDisplay();

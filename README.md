@@ -96,9 +96,9 @@ CREATE TABLE competency_hours
 8. ✅ Timer integration with habit tracking
 9. ✅ Manual competency backfill with minutes input
 10. ✅ Fix delete functionality (simplified to single table)
-11. 🔧 Write unit tests with pytest
-12. ⏳ Split progress bar (Coding vs Leetcode visualization)
-13. ⏳ Preset pomodoro buttons
+11. ✅ Write unit tests with pytest
+12. ✅ Split progress bar (Coding vs Leetcode visualization)
+13. ✅ Preset pomodoro buttons
 14. ⏳ Visual calendar improvements
 15. ⏳ Modern UI with animations
 
@@ -107,13 +107,18 @@ CREATE TABLE competency_hours
 - Finish writing unit tests for all routes
 - Split progress bar to show Coding/Leetcode distribution
 
-## Personal Notes for Coding progress
-- So far, I've been coding this project consistently since the 12th. As of today the 18th Sunday, that makes it 7 days of coding. I'm unsure exactly how much time I've put in. I wanna say for 2 or 3 days (12th to the 13th or 14th I think?) I have been doing about an hour a day. Then, mayyybe starting the 15th I bumped it up to 90 min cycles, since that's the best deep work interval I hear. Then on Saturday, I managed to squeeze in another hour after the 90 min cycle and finally today, Sunday, I did two 90 min cycles and am about to do a third 90 min cycle of leetcode. I probably did some leetcode around the 12th too, but I'm unsure how much time I did exactly. This will all go towards my progress bar (the 600 hour goal thing to becoming a REAL DEV) once the app is done or at least done in the sense that I have all the important things. Since I'm unsure of so many time intervals aside from the general blocks I did, I think I should just say the following:
+## Personal Notes for Coding Progress
+I've been working on this project consistently since January 12th.  
 
-- Coding: 3 days of 60 min, 2 days of 90 min, 1 day of 90 + 60, 1 day of 90 * 2.
-- Leetcode: 1 day of 60 min, 1 day of 90 min
+Early manual estimates (conservative undershoot):  
+- Coding: ~11.5 hours  
+- Leetcode: ~2.5 hours  
+- Total: 14 hours  
 
-- Coding Total: 690 min or 11.5 hours
-- Leetcode Total: 150 min or 2.5 hours
+Recent sessions (Jan 19th):  
+- 90 min deep work block  
+- 25 min Pomodoro block  
 
-It's best to undershoot when it comes to these things. I don't want to say I did more than I did and end up being short of the goal unknowingly, which would make me slightly unqualified in actuality. But yeah like I said I'll just add it to the progress bar once this is done with the backfill option and keep track manually for now.
+Current rough total (still conservative): ~15.9 hours toward the 600-hour junior-dev goal.  
+
+All future time will be auto-tracked via the timer/backfill. Once I backfill the early sessions accurately into the app, this manual note can be removed. Progress bar is live and motivating!

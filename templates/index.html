@@ -10,8 +10,18 @@
     <div class="competency-tracker">
         <h2>Coding Competency Progress</h2>
         <p class="competency-notice">⚠️ Only tracks hours from "Coding" and "Leetcode" timer sessions</p>
+        
+        <h3>Competency Progress (Coding + Leetcode → 600h goal)</h3>
         <div class="progress-container">
-            <div class="progress-bar" style="width: {{ (total_hours / 600 * 100) }}%"></div>
+            <div class="progress-bar">
+                <div class="coding-segment" 
+                    style="width: {{ (coding_hours / 600 * 100) | round(2) }}%;"></div>
+                <div class="leetcode-segment" 
+                    style="width: {{ (leetcode_hours / 600 * 100) | round(2) }}%;"></div>
+            </div>
+            <div class="progress-label">
+                {{ total_hours | round(1) }} / 600 hours • {{ (total_hours / 600 * 100) | round(1) }}%
+            </div>
         </div>
         <p class="hours-display">{{ total_hours }} / 600 hours ({{ ((total_hours / 600 * 100) | round(2)) }}%)</p>
 
@@ -27,6 +37,7 @@
         </form>
     </div>
     <hr>
+
 
     <details>
         <summary>View All Competency Entries (Click to Expand)</summary>
@@ -71,6 +82,11 @@
             <label>Work (min): <input type="number" id="work-duration" value="25" min="1"></label>
             <label>Break (min): <input type="number" id="break-duration" value="5" min="1"></label>
             <button onclick="updateSettings()">Update</button>
+        </div>
+        <div class="preset-buttons">
+            <button type="button" onclick="setPreset(25, 5)">25/5 Classic</button>
+            <button type="button" onclick="setPreset(50, 10)">50/10 Deep</button>
+            <button type="button" onclick="setPreset(90, 15)">90/15 Flow</button>
         </div>
     </div>
     <hr>

@@ -79,9 +79,14 @@ def home():
     c.execute("SELECT habit_name FROM habits_list")
     habits = [row[0] for row in c.fetchall()]
     
-    # Get total competency hours
-    c.execute("SELECT SUM(hours) FROM competency_hours")
-    total_hours = c.fetchone()[0] or 0
+    # Get total competency hours by habit
+    c.execute("SELECT SUM(hours) FROM competency_hours WHERE habit_name = 'Coding'")
+    coding_hours = c.fetchone()[0] or 0
+    
+    c.execute("SELECT SUM(hours) FROM competency_hours WHERE habit_name = 'Leetcode'")
+    leetcode_hours = c.fetchone()[0] or 0
+    
+    total_hours = coding_hours + leetcode_hours
     
     # Get all competency entries for display
     c.execute("SELECT id, date, hours, source, habit_name FROM competency_hours ORDER BY date DESC")
@@ -104,7 +109,10 @@ def home():
         })
         
     conn.close()
-    return render_template('index.html', habits=habit_data, total_hours=round(total_hours, 2),
+    return render_template('index.html', habits=habit_data, 
+                           total_hours=round(total_hours, 2),
+                           coding_hours=round(coding_hours, 2),
+                           leetcode_hours=round(leetcode_hours, 2),
                            competency_entries=competency_entries)
 
 @app.route('/complete/<habit_name>', methods=['POST'])
