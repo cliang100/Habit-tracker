@@ -98,12 +98,14 @@
             {% else %}
                 <h3>{{ habit.name }} - Streak: {{ habit.streak }} days</h3>
             {% endif %}
-            <form action="/complete/{{ habit.name }}" method="POST">
-                <button type="submit">Mark Complete</button>
-            </form>
-            <form action="/delete_habit/{{ habit.name }}" method="POST">
-                <button type="submit" class="delete-btn">Delete</button>
-            </form>
+            <div style="display: flex; gap: 12px; margin-top: 12px;">
+                <form action="/complete/{{ habit.name }}" method="POST">
+                    <button type="submit">Mark Complete</button>
+                </form>
+                <form action="/delete_habit/{{ habit.name }}" method="POST">
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            </div>
         </div>
     {% endfor %}
     <hr>

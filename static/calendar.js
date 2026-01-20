@@ -2,6 +2,22 @@ let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 let habitData = {};
 
+const habitColors = {
+    'Coding': '#f97316',
+    'Leetcode': '#3b82f6'
+};
+
+const availableColors = ['#e0e0e0', '#ff0000', '#8b5cf6', '#ec4899', '#14b8a6', '#44003e'];
+let colorIndex = 0;
+
+function getHabitColor(habitName) {
+    if (!habitColors[habitName]) {
+        habitColors[habitName] = availableColors[colorIndex % availableColors.length];
+        colorIndex++;
+    }
+    return habitColors[habitName];
+}
+
 async function loadHabitData() {
     const response = await fetch('/api/habit_data');
     habitData = await response.json();
@@ -34,12 +50,24 @@ function renderCalendar() {
     // Days of month
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const hasData = habitData[dateStr] && habitData[dateStr].length > 0;
+        const habits = habitData[dateStr] || [];
+        const hasData = habits.length > 0;
         const isToday = new Date().toDateString() === new Date(currentYear, currentMonth, day).toDateString();
+
+        let dotsHTML = '';
+        if (hasData) {
+            dotsHTML = '<div class="habit-dots">';
+            habits.forEach(habit => {
+                const color = getHabitColor(habit);
+                dotsHTML += `<span class="habit-dot" style="background-color: ${color}"></span>`;
+            });
+            dotsHTML += '</div>';
+        }
 
         calendarHTML += `<div class="calendar-day ${hasData ? 'completed' : ''} ${isToday ? 'today' : ''}"
         onclick="showDayDetails('${dateStr}')">
-        ${day}
+        <span class="day-number">${day}</span>
+        ${dotsHTML}
         </div>`;
     }
 
