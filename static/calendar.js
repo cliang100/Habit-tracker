@@ -97,8 +97,22 @@ function showDayDetails(dateStr) {
     const habits = habitData[dateStr];
     if (habits && habits.length > 0) {
         document.getElementById('modal-date').textContent = dateStr;
-        const habitList = document.getElementById('modal-habits');
-        habitList.innerHTML = habits.map(h => `<li>${h}</li>`).join('');
+        const container = document.getElementById('modal-habits-container');
+
+        container.innerHTML = habits.map(h => `
+            <div style="display: flex; justify-content: space-between; align-items: center; 
+                        padding: 12px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); 
+                        margin: 8px 0; border-radius: 10px;">
+                <span>${h}</span>
+                <form action="/delete_habit_completion" method="POST" style="margin: 0;">
+                    <input type="hidden" name="habit_name" value="${h}">
+                    <input type="hidden" name="date" value="${dateStr}">
+                    <button type="submit" class="delete-btn-small" 
+                            onclick="return confirm('Delete ${h} from ${dateStr}?')">×</button>
+                </form>
+            </div>
+        `).join('');
+
         document.getElementById('day-modal').style.display = 'block';
     }
 }

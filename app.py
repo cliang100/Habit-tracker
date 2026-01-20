@@ -219,6 +219,18 @@ def delete_competency(entry_id):
     conn.close()
     return redirect(url_for('home'))
 
+@app.route('/delete_habit_completion', methods=['POST'])
+def delete_habit_completion():
+    habit_name = request.form['habit_name']
+    date_str = request.form['date']
+    
+    conn = sqlite3.connect(get_db_path())
+    c = conn.cursor()
+    c.execute("DELETE FROM habits WHERE habit_name = ? AND date = ?", (habit_name, date_str))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('home'))
+    
 @app.route('/log_habit_time', methods=['POST'])
 def log_habit_time():
     habit_name = request.form['habit_name']

@@ -13,10 +13,10 @@ A web-based habit streak tracker built with Flask and SQLite. Track multiple hab
 - ✅ **Manual backfill** - Input minutes for competency hours, auto-converts to hours
 - ✅ **Collapsible entries table** - View and delete all competency entries
 - ✅ **Calendar view** - Interactive calendar with color-coded habit dots and modal popups
+- ✅ **Delete calendar entries** - Remove individual habit completions from calendar modal
 - ✅ **Modern UI** - Glassmorphism, smooth animations, gradient effects
 - ✅ **Unit tests** - pytest coverage for core functionality
 - ✅ **Dark mode** - Clean, modern design
-- 🔧 **IN PROGRESS** - Delete individual habit completions from calendar modal
 
 ## Setup
 ```bash
@@ -64,12 +64,4 @@ CREATE TABLE competency_hours
 - pytest (testing)
 
 ## Personal Notes for Coding Progress
-I've been working on this project consistently since January 12th.  
-
-Early manual estimates + recent sessions:  
-- Coding: ~11.5 hours  
-- Leetcode: ~2.5 hours  
-- Recent Jan 19th sessions: 3.5 hours (90 min + 25 min + 90 min)
-- **Total: ~17.5 hours toward 600-hour junior-dev goal**
-
-All future time will be auto-tracked via the timer/backfill. Once I backfill the early sessions accurately into the app, this manual note can be removed. Progress bar is live and motivating!
+Done with this project for the time being!
